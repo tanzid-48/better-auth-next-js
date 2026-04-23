@@ -12,43 +12,26 @@ import {
 } from "@heroui/react";
 import { authClient } from "@/lib/auth-client";
 
-const SingUpPage = () => {
+const SingInPage = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
+    const fromData = new FormData(e.currentTarget);
 
-    const formData = new FormData(e.currentTarget);
+    const userData = Object.fromEntries(fromData.entries());
+    console.log("from submit ", userData);
 
-    // Convert FormData to plain object
-    const data = {};
-    formData.forEach((value, key) => {
-      data[key] = value.toString();
-    });
-    console.log(data);
-
-    const { data: res, error } = await authClient.signUp.email({
-      name: data.name,
-      email: data.email,
-      password: data.password,
-      callbackURL: '/'
+    const { data, error } = await authClient.signIn.email({
+      email: userData.email,
+      password: userData.password,
+      rememberMe: true,
+      callbackURL: "/",
     });
 
-      if (error) {
-      alert("❌ Error:", error);
-    } else {
-      alert("✅ Success:", res);
-    }
-  
-    console.log(res,error)
-
+    console.log({data,error})
   };
 
   return (
     <Form className="flex w-96 flex-col gap-4" onSubmit={onSubmit}>
-      <TextField isRequired className="w-full max-w-64" name="fullName">
-        <Label>Full Name</Label>
-        <Input name="name" placeholder="Your Name" />
-        <Description>This field is required</Description>
-      </TextField>
       <TextField
         isRequired
         name="email"
@@ -102,4 +85,4 @@ const SingUpPage = () => {
   );
 };
 
-export default SingUpPage;
+export default SingInPage;
